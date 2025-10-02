@@ -6,6 +6,8 @@ import joblib
 from tensorflow.keras.models import load_model
 import plotly.graph_objects as go
 from collections import deque
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force CPU, avoid cuInit error
 
 # --- CONFIGURATION ---
 st.set_page_config(
