@@ -6,9 +6,8 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 import tensorflow as tf
-from tensorflow.keras.models import Model
-# MODIFIED: Added more specific layers for the advanced model
-from tensorflow.keras.layers import Input, LSTM, Dense, AdditiveAttention, Concatenate, RepeatVector, TimeDistributed, Bidirectional
+from tensorflow.keras.models import Model, Sequential, load_model
+from tensorflow.keras.layers import Input, LSTM, Dense, AdditiveAttention, Bidirectional, RepeatVector, Concatenate, TimeDistributed
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import matplotlib.pyplot as plt
 import seaborn as sns
