@@ -6,7 +6,7 @@ import joblib
 from tensorflow.keras.models import load_model
 import plotly.graph_objects as go
 from collections import deque
-
+from tensorflow.keras.initializers import Orthogonal 
 # --- CONFIGURATION ---
 st.set_page_config(
     layout="wide",
@@ -61,13 +61,19 @@ st.markdown("""
 def load_all_models():
     print("Loading models and preprocessing objects...")
     try:
-        forecaster = load_model('forecasting_model.keras', safe_mode=False)
+        # Define the custom object for the loader
+        custom_objects = {'Orthogonal': Orthogonal}
+        
+        # Pass the custom objects to load_model
+        forecaster = load_model('forecasting_model.keras', custom_objects=custom_objects, safe_mode=False)
+        
         classifier = joblib.load('classification_model.joblib')
         scaler = joblib.load('scaler.joblib')
         encoder = joblib.load('encoder.joblib')
         print("All models loaded successfully.")
         return forecaster, classifier, scaler, encoder
     except Exception as e:
+        # The error message will now come from here if this fix doesn't work
         st.error(f"Error loading models: {e}. Make sure all model files are in the directory.")
         return None, None, None, None
 
