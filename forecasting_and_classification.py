@@ -5,14 +5,20 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
+
+# TensorFlow (only if you use TF ops, device management, etc.)
 import tensorflow as tf
-from tensorflow.keras.models import Model, Sequential, load_model
-from tensorflow.keras.layers import Input, LSTM, Dense, AdditiveAttention, Bidirectional, RepeatVector, Concatenate, TimeDistributed
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+
+# Use standalone keras (Keras 3)
+from keras.models import Model, Sequential, load_model
+from keras.layers import Input, LSTM, Dense, AdditiveAttention, Bidirectional, RepeatVector, Concatenate, TimeDistributed
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
 import joblib
+
 
 # Suppress verbose TensorFlow logging
 import os
