@@ -5,10 +5,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"   # Force CPU mode
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"    # Suppress TF logs
 
 # TensorFlow (only if you use TF ops, device management, etc.)
 import tensorflow as tf
-
+tf.config.threading.set_intra_op_parallelism_threads(1)
+tf.config.threading.set_inter_op_parallelism_threads(1)
 # Use standalone keras (Keras 3)
 from keras.models import Model, Sequential, load_model
 from keras.layers import Input, LSTM, Dense, AdditiveAttention, Bidirectional, RepeatVector, Concatenate, TimeDistributed
