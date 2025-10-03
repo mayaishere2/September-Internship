@@ -3,12 +3,14 @@ import pandas as pd
 import numpy as np
 import time
 import joblib
-from keras.models import load_model
 import plotly.graph_objects as go
 from collections import deque
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force CPU, avoid cuInit error
-
+from keras.models import load_model
+import tensorflow as tf
+tf.config.threading.set_intra_op_parallelism_threads(1)
+tf.config.threading.set_inter_op_parallelism_threads(1)
 # --- CONFIGURATION ---
 st.set_page_config(
     layout="wide",
