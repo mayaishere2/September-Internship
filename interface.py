@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 from collections import deque
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force CPU, avoid cuInit error
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # suppress logs
 from keras.models import load_model
 import tensorflow as tf
 tf.config.threading.set_intra_op_parallelism_threads(1)
