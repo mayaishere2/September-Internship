@@ -6,12 +6,37 @@ import joblib
 import plotly.graph_objects as go
 from collections import deque
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force CPU, avoid cuInit error
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # suppress logs
-from keras.models import load_model
-import tensorflow as tf
-tf.config.threading.set_intra_op_parallelism_threads(1)
-tf.config.threading.set_inter_op_parallelism_threads(1)
+
+# --- make TF behave on shared CPUs BEFORE importing it ---
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"       # Force CPU
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"        # Suppress TF logs
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"       # <-- prevents segfaults on some CPUs
+os.environ["OMP_NUM_THREADS"] = "1"             # tame thread pools
+os.environ["TF_NUM_INTRAOP_THREADS"] = "1"
+os.environ["TF_NUM_INTEROP_THREADS"] = "1"
+
+st.set_page_config(layout="wide", page_title="LNG Turbine Predictive Dashboard", page_icon="⚡")
+
+@st.cache_resource
+def load_all_models():
+    # Lazy import after env vars are set
+    import tensorflow as tf
+    from keras.models import load_model
+
+    # reduce thread count further at runtime
+    tf.config.threading.set_intra_op_parallelism_threads(1)
+    tf.config.threading.set_inter_op_parallelism_threads(1)
+
+    try:
+        forecaster = load_model('forecasting_model.keras', safe_mode=False)
+        classifier = joblib.load('classification_model.joblib')
+        scaler = joblib.load('scaler.joblib')
+        encoder = joblib.load('encoder.joblib')
+        return forecaster, classifier, scaler, encoder
+    except Exception as e:
+        st.error(f"Error loading models: {e}. Make sure all model files are in the directory.")
+        return None, None, None, None
+
 # --- CONFIGURATION ---
 st.set_page_config(
     layout="wide",
@@ -60,21 +85,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
-# --- MODEL & DATA LOADING (Cached for performance) ---
-@st.cache_resource
-def load_all_models():
-    print("Loading models and preprocessing objects...")
-    try:
-        forecaster = load_model('forecasting_model.keras', safe_mode=False)
-        classifier = joblib.load('classification_model.joblib')
-        scaler = joblib.load('scaler.joblib')
-        encoder = joblib.load('encoder.joblib')
-        print("All models loaded successfully.")
-        return forecaster, classifier, scaler, encoder
-    except Exception as e:
-        st.error(f"Error loading models: {e}. Make sure all model files are in the directory.")
-        return None, None, None, None
 
 @st.cache_data
 def load_simulation_data(_scaler): # Pass in the loaded scaler to use it
